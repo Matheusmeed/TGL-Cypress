@@ -1,8 +1,16 @@
 /// <reference types="Cypress"  />
 
 describe('Autenticar Usuário', () => {
+  let validAccount;
+
   beforeEach(() => {
     cy.visit('');
+  });
+
+  before(() => {
+    cy.fixture('validAccount').then((data) => {
+      validAccount = data;
+    });
   });
 
   it('Login com conta não existente', () => {
@@ -16,7 +24,7 @@ describe('Autenticar Usuário', () => {
 
   it('Login com conta existente', () => {
     cy.intercept('POST', 'http://127.0.0.1:3333/login').as('login');
-    cy.LogIn({ email: 'yasmin@gmail.com', password: 'yasmin1' });
+    cy.LogIn({ email: validAccount.email, password: validAccount.password });
 
     cy.wait('@login').then((xhr) => {
       expect(xhr.response.statusCode).be.eq(200);
@@ -24,12 +32,12 @@ describe('Autenticar Usuário', () => {
   });
 
   it('Login sem preencher a senha', () => {
-    cy.get(':nth-child(2) > input').type('yasmin@gmail.com');
+    cy.get(':nth-child(2) > input').type(validAccount.email);
     cy.get(':nth-child(3) > button').click();
   });
 
   it('Login sem preencher o email', () => {
-    cy.get(':nth-child(2) > input').type('senha111');
+    cy.get(':nth-child(2) > input').type(validAccount.password);
     cy.get(':nth-child(3) > button').click();
   });
 });

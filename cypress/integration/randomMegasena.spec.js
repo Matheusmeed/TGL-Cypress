@@ -1,9 +1,16 @@
 /// <reference types="Cypress"  />
 
 describe('Criar uma aposta da Mega-Sena de forma aleatória', () => {
+  let validAccount;
+  before(() => {
+    cy.fixture('validAccount').then((data) => {
+      validAccount = data;
+    });
+  });
+
   beforeEach(() => {
     cy.visit('');
-    cy.LogIn({ email: 'yasmin@gmail.com', password: 'yasmin1' });
+    cy.LogIn({ email: validAccount.email, password: validAccount.password });
   });
 
   it('apertando em Complete Game duas vezes', () => {

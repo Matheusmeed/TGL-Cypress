@@ -1,6 +1,14 @@
 /// <reference types="Cypress"  />
 
 describe('Criar um Usuário', () => {
+  let validAccount;
+
+  before(() => {
+    cy.fixture('validAccount').then((data) => {
+      validAccount = data;
+    });
+  });
+
   beforeEach(() => {
     cy.visit('/registration');
   });
@@ -8,9 +16,9 @@ describe('Criar um Usuário', () => {
   it('Cadastro com email inválido (que já existe no DB)', () => {
     cy.intercept('POST', 'http://127.0.0.1:3333/user/create').as('signup');
     cy.SignUp({
-      name: 'Yasmin',
-      email: 'yasmin@gmail.com',
-      password: 'yasmin1',
+      name: validAccount.username,
+      email: validAccount.email,
+      password: validAccount.password,
     });
     cy.wait('@signup').then((xhr) => {
       expect(xhr.response.statusCode).be.eq(400);
@@ -20,9 +28,9 @@ describe('Criar um Usuário', () => {
   it('Cadastro correto (com email que não existe no DB)', () => {
     cy.intercept('POST', 'http://127.0.0.1:3333/user/create').as('signup');
     cy.SignUp({
-      name: 'Lucas',
-      email: 'lucas12345aaa@mail.com',
-      password: 'lucas1',
+      name: 'Nao',
+      email: 'naoexisto@mail.com',
+      password: 'nao12345',
     });
     cy.wait('@signup').then((xhr) => {
       expect(xhr.response.statusCode).be.eq(200);
